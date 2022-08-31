@@ -2,25 +2,28 @@ import logging
 
 import psycopg
 import toml
+from awair import AwairClient
 
+
+def fetch_data(token):
+    output = []
+
+    with AwairClient(token) as client:
+        devices = client.get_devices()
+
+        for device in devices:
+            output.extend(device.air_data_raw(fahrenheit=True))
+
+    return output
+        
 
 def main(config):
-    # TODO Get influx data
-
-    data = [{"sensor_id": "FakeSensor",
-            "record_datetime": 0,
-            "score": 0,
-            "temperature": 0,
-            "humidity": 0,
-            "co2": 0,
-            "voc": 0,
-            "pm25": 0}]
+    data = fetch_data(config['awair']['token'])
 
     with psycopg.connect(config['timescaledb']['connection_string']) as conn:
         with conn.cursor() as cur:
-            with cur.copy("COPY air_quality FROM STDIN") as copy:
-                for point in data:
-                    copy.write_row(point)
+            for point in data:
+                cur.execute(f"INSERT INTO {config['timescaledb']['table']} VALUES (%(sensor_id)s, %(record_datetime)s, %(score)s, %(temperature)s, %(humidity)s, %(carbon_dioxide)s, %(volatile_organic_compounds)s, %(particulate_matter_2_5)s) ON CONFLICT DO NOTHING", point)
 
         conn.commit()
 
@@ -31,9 +34,9 @@ try:
 
     if ("timescaledb" not in config or "awair" not in config):
         logging.error(
-            "Invalid config.toml file, please use config.example.yaml as a guide")
+            "Invalid config.toml file, please use config.example.toml as a guide")
     else:
         main(config)
 
 except FileNotFoundError as e:
-    logging.error("Please add a config.yaml file")
+    logging.error("Please add a config.toml file")

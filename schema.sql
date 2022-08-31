@@ -5,12 +5,12 @@ DROP TABLE IF EXISTS "air_quality";
 CREATE TABLE "air_quality"(
     sensor_id TEXT,
     record_datetime TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    score smallint,
+    score integer,
     temperature real,
     humidity real,
-    co2 smallint,
-    voc smallint,
-    pm25 smallint
+    carbon_dioxide integer,
+    volatile_organic_compounds integer,
+    particulate_matter_2_5 integer
 );
 
 SELECT create_hypertable('air_quality', 'record_datetime');

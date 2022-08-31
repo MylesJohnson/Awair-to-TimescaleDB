@@ -1,0 +1,6 @@
+[awair]
+token = "" # Get from https://developer.getawair.com/
+
+[timescaledb]
+connection_string = "" # postgres://{user}:{password}@{hostname}:{port}/{database-name}
+table = "air_quality" 
