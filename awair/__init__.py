@@ -1,6 +1,6 @@
 import httpx
 
-# Maybe I'll eventually spin this out into its own seperate library, but its not ready for that yet.
+# Maybe I'll eventually spin this out into its own separate library, but its not ready for that yet.
 
 
 class AwairClient:

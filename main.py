@@ -15,7 +15,7 @@ def fetch_data(token):
             output.extend(device.air_data_raw(fahrenheit=True))
 
     return output
-        
+
 
 def main(config):
     data = fetch_data(config['awair']['token'])
